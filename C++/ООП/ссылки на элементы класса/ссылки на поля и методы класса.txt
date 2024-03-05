@@ -1,0 +1,33 @@
+К элементам класса, можно обращатся посредством указателей
+
+#include <iostream>
+class Prepod 
+{   int slay_students;
+    int moved_students;
+
+public:
+    int survive_students = 20;
+    Prepod(int sls = 5, int ms = 15) { slay_students = sls; moved_students = ms; }
+    int get_slay_students() { return(slay_students); };
+    int get_moved_students() { return (moved_students); };
+    int increase_moved_students(int increase) { return(moved_students+=increase); }
+};
+
+int main()
+{   Prepod Porkshyan;
+
+    int (Prepod::*slay)();    //описание указателя на метод класса
+
+    slay = &Prepod::get_slay_students;      //присваивание значения данному указателю
+    std::cout << (Porkshyan.*slay)()<<'\n';
+
+    slay = &Prepod::get_moved_students;     //присваивание значения данному указателю
+    std::cout << (Porkshyan.*slay)() << '\n';
+ 
+    int(Prepod:: * surv);       //описание указателя на поле класса (поле класса всегда должно быть public)
+    surv = &Prepod::survive_students;       //присваивание значения данному указателю
+    std::cout << (Porkshyan.*surv)<<'\n';
+    Porkshyan.*surv += 10;      //работа с указателем
+    std::cout << (Porkshyan.*surv) << '\n';
+}
+

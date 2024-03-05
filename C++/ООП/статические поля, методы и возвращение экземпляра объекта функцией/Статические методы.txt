@@ -1,0 +1,47 @@
+Р Лафорее ст 500
+
+Как и статические поля, статические методы едины для всех объектов свого класса и могут быть вызваны как через экземпляр класса, так и через его имя
+
+#include <iostream>
+#include <string>
+
+class alpha {
+private:
+	std::string	ID;
+	static int count;
+
+public:
+	alpha() {
+		count++;
+		ID = std::to_string(count) + char(count * 20);
+	}
+
+	~alpha() {
+		count--;
+	}
+
+	static std::string show_count() {
+		return(std::to_string(count)+"\n");
+	}
+
+	std::string show_ID() {
+		return(ID +"\n");
+	}
+};
+
+int alpha::count = 0;
+
+int main()
+{
+ 
+	alpha a1;
+	std::cout << alpha::show_count();
+
+
+	alpha* arr = new alpha[10];
+	std::cout << alpha::show_count();//вызов через имя класса
+
+
+	 delete[] arr;
+	 std::cout << a1.show_count();//вызов через экземпляр класса
+}

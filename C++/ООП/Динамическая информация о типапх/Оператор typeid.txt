@@ -1,0 +1,48 @@
+Лафорре Р ст 256
+В C++ есть возможность узнать имя класса и даже эти имена сравнивать, за данный механизм отвечает оператор typeid который принимает адресс нужного объекта и выдаёт его имя (типом type_info)
+
+КОД:
+#include <iostream>
+#include <typeinfo>
+
+
+class father {
+public:
+    virtual void funct() {};
+private:
+    int data;
+};
+
+class son : public father {
+
+};
+
+class doughter: public father {
+
+};
+
+bool is_son(father* unknown) {
+
+    son* exaample;
+
+    if (exaample = dynamic_cast<son*> (unknown)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+int main()
+{
+    
+    doughter obj_1;
+    son obj_2;
+    father* pointer = &obj_1;
+
+    std::cout << typeid(*pointer).name() << "\n";
+
+    pointer = &obj_2;
+    const type_info &p = typeid(*pointer);
+    std::cout << p.name() << "\n";
+}

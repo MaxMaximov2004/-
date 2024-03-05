@@ -1,0 +1,92 @@
+https://metanit.com/cpp/tutorial/9.1.php
+
+Для классов также существуют шаблоны, и используются следующем образом: перед описанием класса пишится: template <typename NAME>
+и затем NAME используется в качестве типа при определяемых переменных, также возможно шаболны применят к методам определямых вне класса тогда
+это будет выглядеть следующем образом:
+template <typename NAME>
+void/*или другое возвращаемое значение*/ имя_класса<NAME>::имя_метода (список необходимы переменных в.т.ч. и NAME)
+
+Использование шаблонов повышает сложность написания и планирования класса, но делает его более гибким в работе
+
+#include <iostream>
+#include <string>
+
+template<typename Arr_Type>
+class _array {
+private:
+	Arr_Type *arr = nullptr;
+	int length;
+	friend class _array;
+public:
+
+	_array(int n) :length(n) {
+		arr = new Arr_Type[n];
+	}
+
+	_array (Arr_Type *a, int n):length(n) {
+		arr = new Arr_Type[n];
+
+		for (int i = 0; i < length; i++) {
+			arr[i] = a[i];
+		};
+	}
+
+	_array(Arr_Type Unit, int n) :length(n) {
+		arr = new Arr_Type[n];
+
+		for (int i = 0; i < length; i++) {
+			arr[i] = Unit;
+		};
+	} 
+
+	void show_str() {
+		//std::string s;
+
+		for (int i = 0; i < length; i++) {
+			//s += std::to_string(arr[i]) + "\n";
+			std::cout << arr[i] << "\n";
+		}
+	}
+
+	Arr_Type& operator[](int n) 
+	{
+
+		if ((n >= length) || (n < 0)) {
+			//return(nullptr);
+		}
+		else {
+			return(arr[n]);
+		}
+	}
+
+
+	_array& operator=(_array& A) {
+		
+		std::cout << "Active =";
+			for (int i = 0; i < length; i++) {
+				arr[i] = A.arr[i];
+			}
+			return(*this);
+	}
+
+	_array(_array& A) {
+		length = A.length;
+		arr = new Arr_Type[length];
+
+		for (int i = 0; i < length; i++) {
+			arr[i] = A.arr[i];
+		}
+	}
+	
+};
+
+
+
+int main()
+{
+	_array <std::string> a("Bla-Bla-Bla", 4);
+
+	a.show_str();
+
+}
+

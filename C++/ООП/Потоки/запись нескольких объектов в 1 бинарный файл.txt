@@ -1,0 +1,151 @@
+Р Лаффоре ст 572
+Для того, что-бы записать несколько объектов разных классов, которые являются потомками от одного, нужно также иметь список всех записываемых в файл классов в виде enum, (в принципе можно использовать буквенное обозночение {char-ы}, но "объекты" enum в принципе представляют собой числа и использовать их будет удобнее). Смысл в чём: в бинарный файл пекрвым мы записываем enum записываемого объекта, затем записываем этот самый объект, при чтении мы читаем с начала объект enum (у них всех будет одинаковый размер), затем смотря на него мы выбираем подходящий размер для чтения уже главного объекта, который и несёт всю информацию. 
+
+КОД:
+Здесь 3 класса: 1-класса продукта, описывающий характеристики любого продукта такие как: цена(Price) и артикул(ID) также от него есть 2 порождённых от него класса твёрдые продукты и жидкие продукты, также есть функция опреления типа проукта (она принимает указатель (или адресс) на объект и затем выдаёт его имя-enum для записи в файл) и функции записи (которые записывает в файл список {просто Лаффоре записывает вообще все порождённые объекты})  и чтения из файла 
+
+#include <fstream> 
+#include <iostream>
+#include <string>
+#include <typeinfo>
+#include <ctime>
+#include <vector>
+
+enum product_type {solid,liquid};
+
+class product {
+protected:
+	int ID;
+	double Price;
+public:
+
+	product(int id, double Pr) :ID(id), Price(Pr) {
+
+	}
+
+	virtual std::string get_info() {
+		return("ID: " + std::to_string(ID) + " Price: " + std::to_string(Price)="\n");
+	}
+};
+
+class solid_product : public product {
+protected:
+	double Mass; //in kg
+	double bulk; //in cm^3
+public:
+
+	solid_product(int id, double Pr, double M, double size) :product(id, Pr), Mass(M), bulk(size) {
+
+	}
+
+	std::string get_info() {
+		return("ID: " + std::to_string(ID) + " Price: " + std::to_string(Price)+ " mass (in kg): "+std::to_string(Mass)+" size (in cm^3): "+std::to_string(bulk)+"\n");
+	}
+};
+
+class liquid_product :public product {
+protected:
+	double density; //in g/sm^3
+	double bulk; //in sm^3
+	double Mass; //in kg
+public:
+
+	liquid_product(int id, double Pr, double dens, double size) :product(id, Pr), density(dens), bulk(size) {
+		Mass = (density * bulk) / 1000;
+	}
+
+	std::string get_info() {
+		return("ID: " + std::to_string(ID) + " Price: " + std::to_string(Price) + " mass (in kg): " + std::to_string(Mass) + " size (in cm^3): " + std::to_string(bulk)+ " density (in g/sm^3): "+std::to_string(density)+"\n");
+	}
+};
+
+product_type ret_type(product* elem) {
+
+	if (typeid(*elem) == typeid(solid_product)) {
+		return(solid);
+	}
+	if (typeid(*elem) == typeid(liquid_product)) {
+		return(liquid);
+	}
+}
+
+void save(std::vector<product*> list) {
+
+	std::ofstream file;
+	file.open("test_poly.dat", std::ios::binary | std::ios::trunc);
+	product_type cur_type;
+
+	if (!file) {
+		exit(-2);
+	}
+
+	for (int i = 0; i < list.size(); i++) {
+		product_type cur_type = ret_type(list[i]);
+
+		file.write((char*)&cur_type, sizeof(cur_type));
+		int size = 0;
+
+		switch (cur_type) {
+		case liquid: {size = sizeof(liquid_product); break; }
+		case solid: {size = sizeof(solid_product); break; }
+		}
+		file.write((char*)(list[i]), size);
+
+		if (!file) {
+			exit(-2);
+		}
+	}
+
+	file.close();
+ }
+
+void read() {
+
+	std::ifstream file;
+	file.open("test_poly.dat", std::ios::binary);
+
+	while (!file.eof()){
+
+		product_type cur_type;
+		file.read((char*)&cur_type, sizeof(cur_type));
+
+		if (!file.eof()) {
+		product* pointer = nullptr;
+		int size = -1;
+
+			switch(cur_type) {
+				case liquid: {pointer = new liquid_product(-1, -1, -1, -1); size = sizeof(liquid_product); break; }
+				case solid: {pointer = new solid_product(-1, -1, -1, -1); size = sizeof(solid_product); break; }
+			}
+
+			file.read((char*)pointer, size);
+			std::cout << pointer->get_info();
+		}
+	}
+}
+
+int main()
+{
+	srand(time(0));
+	std::vector<product*> notes;
+
+	for (int i = 0; i < 20; i++) {
+
+		if (i < 10) {
+			notes.push_back(new solid_product(rand() % 100, rand(), rand() % 20+5, rand() % 30 + 10));
+		}
+		else {
+			notes.push_back(new liquid_product(rand() % 100, rand(), rand() % 40+20, rand() % 30 + 10));
+		}
+
+	}
+
+	std::cout << "From vect:\n";
+	for (int i = 0; i < notes.size(); i++) {
+		std::cout << notes[i]->get_info();
+	}
+
+	save(notes);
+	std::cout << "From file:\n";
+	read();
+} 

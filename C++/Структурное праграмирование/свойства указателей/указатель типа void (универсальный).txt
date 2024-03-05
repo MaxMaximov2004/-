@@ -1,0 +1,55 @@
+Лафорре Р ст 420
+https://learnc.info/c/void_pointers.html
+
+хоть и C++ строго типизированный язык, он позволяет работу с указателями типа void которые могут ссылаться на любые переменные в том числе и пользовательские классы
+
+#include <iostream>
+#include <string>
+
+class some_class {
+private:
+	int v;
+	double w;
+
+public:
+
+	some_class(int input):v(input*3) {
+
+		if (v >= 90) {
+			w = v * 3.14;
+		}
+		else {
+			w=36874698789;
+		}
+	}
+
+	std::string get_data() {
+		return ("data: " + std::to_string(v) + "\t" + std::to_string(w));
+	}
+};
+
+
+int main()
+{
+	void* a = nullptr;
+	int b = 90;
+	double g = 84687.56847;
+	std::string s = "xdpbhjpdnzdgfnjfdxgnxfgn";
+	some_class test(20);
+
+	a = &b;
+	*((int*)a) += 10;
+
+	std::cout << *((int*)a) << "\n";
+
+	a = &g;
+	*((double*)a) *= 0.125;
+	std::cout << *((double*)a) << "\n";
+
+	a = &s;
+	std::cout << *((std::string*)a) << "\n";
+
+	
+	a = &test;
+	std::cout << ((some_class*)a)->get_data() << "\n";
+}

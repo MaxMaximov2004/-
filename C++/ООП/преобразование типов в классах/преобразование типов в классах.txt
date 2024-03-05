@@ -1,0 +1,43 @@
+если предпологается, что класс будет взаимодействовать с прочими типами то нужно прописать в классе преобразование к конкретным типам, 
+что-бы компилятор мог понять как это лутше всего делать.
+Синтаксис: 	operator int() { return (<int>)}	<-в данном случае мы говорим компилятору, что наш класс может быть представлен или преобразован в int 
+(желательно иметь также и конструктор который может принимать int в качестве аргумента (для симетрии))
+
+#include <iostream>
+#include <string>
+
+class separate_number {
+private:
+	int one;
+	int dozens;
+	int hundreds;
+
+public:
+	separate_number(int N) {
+		one = N % 10;
+		N -= one;
+
+		dozens = N % 100;
+		N -= dozens;
+
+		hundreds = N % 1000;
+		hundreds += (N -hundreds);
+	}
+
+	operator int() {
+		return(one + dozens + hundreds);
+	}
+
+	void print() {
+		std::cout << "hundreds:" << hundreds << "\ndozens:" << dozens << "\none:" << one<< "\n";
+	}
+
+
+};
+
+int main()
+{
+	separate_number test=3123;//преобразование типов из int в экземпляр класса (происходит через конструктор ст 13)
+	test.print();
+	std::cout  << static_cast<int>(test);//преобразование типов  из экземпляра классов в int используется преопределённое преобразование ст 24
+}

@@ -1,0 +1,124 @@
+Р Лафорре ст 491
+В C++ имеются friend-функции, которые имеют доступ к private-полям классов. Friend-функция должна быть определена в том классе, к которому у неё должен быть доступ.
+!!!ВНИМАНИЕ ИСПОЛЬЗОВАНИЕ БОЛЬШОГО ЧИСЛА FRIEND-ФУНКЦИЙ СЧИТАЕТСЯ ПЛОХИМ ТОНОМ И ИЗБЕГАЕТСЯ!!!
+
+p.s (2  примера!)
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <iostream>
+#include <string>
+
+class B;
+
+class A {
+private:
+    double super_secret_data;
+    
+public:
+    A(int n):super_secret_data(0) {
+        while (n!=0)
+        {
+            super_secret_data += n % 6;
+            n /= 6;
+        }
+    }
+
+    std::string show_data() {
+        return(std::to_string(super_secret_data)+"\n");
+    }
+    
+    friend double function(A obj_a, B obj_b);
+};
+
+class B {
+private:
+    double super_secret_data;
+public:
+    B(std::string s):super_secret_data(0)   {
+
+        for (int i = 0; i < s.length(); i++) {
+            super_secret_data += int(s[i]);
+        }
+        super_secret_data *=3.14;
+    }
+
+    std::string show_data() {
+        return(std::to_string(super_secret_data) + "\n");
+    }
+
+    friend double function(A obj_a, B obj_b);
+};
+
+double function(A obj_a, B obj_b) {
+    return(obj_a.super_secret_data + obj_b.super_secret_data);
+}
+
+int main()
+{
+    A test(856214);
+    std::cout << test.show_data();
+
+    B test_1("wesfaerg");
+    std::cout << test_1.show_data();
+
+
+    std::cout << function (test,test_1);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*В данном примере переопределённый оператор + используется в качестве функции и принимает два объекта класса SSS (и соответственно все его производные классы) */
+
+#include <iostream>
+#include <string>
+
+class SSS /*super safe storage*/ {
+protected:
+	double SSD=0;
+public:
+	 virtual std::string show_data(){
+		return(std::to_string(SSD)+"\n");
+	}
+	 friend double operator + (SSS, SSS);
+};
+
+class A:public SSS {
+public:
+
+	A(int n) {
+
+		while (n != 0) {
+			SSD += n % 7 * n / 3;
+			n /= 2;
+		}
+	}
+
+	friend double operator + (SSS, SSS);
+};
+
+class B :public SSS {
+public:
+
+	B(std::string s) {
+
+		for (int i = 0; i < s.length(); i++) {
+			SSD += int(s[i]) * 3.1539849834;
+		}
+	}
+
+	friend double operator + (SSS, SSS);
+};
+
+double operator + (SSS obj_1, SSS obj_2) {
+	return (obj_1.SSD + obj_2.SSD);
+}
+
+int main()
+{
+ 
+	A test(6846);
+	B test_1("lrhk'poaetkhn");
+	std::cout << test.show_data();
+	std::cout << test_1.show_data();
+	std::cout << test+test_1;
+}

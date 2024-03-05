@@ -1,0 +1,45 @@
+лафорре р ст 247
+статические поля-поля принадлежеащие сразу всем объектам класса (как и методы) используются для подсчёта уже созданных объектов 
+и (или) для хранения данных, нужных сразу всем объектам.
+Функцию можно заставить возвращать объект или ссылку на объект пользовательского класса
+
+
+#include <iostream>
+#include <cmath>
+#include <string>
+
+class pos {
+private:
+    double Vx,Vy,X,Y;
+    static int count_of_points;//статическое поле класса
+public:
+
+    pos( double V, double ang, double time) /* V- скорость ang- угол time- время, всё в СИ*/ {
+        /*расчёт положения тела брошенного под углом к горизонту*/
+        Vx = V * cos(ang);
+        Vy = V * sin(ang) - 9.8 * time;
+        X = Vx * time;
+        Y = Vy * time - ((9.8 * time * time) / 2);
+        count_of_points++;
+    }
+
+    std::string get_data() {
+        return("point: "+ std::to_string(count_of_points) + " main speed: " + std::to_string(sqrt((Vx * Vx) + (Vy * Vy))) + " vector speed: x-> " + std::to_string(Vx) + " y-> " + std::to_string(Vy) + " coordinates: x->" + std::to_string(X) + " y->" + std::to_string(Y) + "\n");
+    }
+};
+
+int pos::count_of_points = 0;
+
+pos use_funct(double speed, double angle, double time) {
+    pos p(speed, angle, time);
+    return(p);
+}
+
+int main()
+{
+    pos test = use_funct(500, 45, 3); //использование функции возвращающую объект класса
+    std::cout << test.get_data();
+    pos test1 = use_funct(500, 45, 5);
+    std::cout << test1.get_data();
+}
+

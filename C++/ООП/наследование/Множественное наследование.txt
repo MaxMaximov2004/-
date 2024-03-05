@@ -1,0 +1,89 @@
+Р Лафорре ст 389
+
+В языке C++ возможно и множественнон наследование, т.е 1 производный класс может наследовать поля и методы нескольких родительских классов, это нужно для того что-бы соеденить несколько специфик от классов в один или
+когда предпологается, что классы будут работать весьма тесно и есть причина создать производный от них
+Синтаксис: class <Class_name>: protected Class_A, public Class_b,...(можно воткнуть списки иниыилизации) "При этом Class_A не будет виден извне, а Class_b будет виден"
+
+P.S. Когда вызывается конструктор производного класса должны вызываются и конструкторы родительского класса для заполнения их полей.
+
+#include <iostream>
+#include <string>
+
+class s_array {
+protected:
+	int* arr = nullptr;
+	int length;
+
+public:
+	s_array(int l) :length(l) {
+		arr = new int[l];
+	}
+
+	s_array(int l,int data) :length(l) {
+		arr = new int[l];
+		for (int i = 0; i < l; i++) {
+			arr[i] = data;
+		}
+	}
+
+	~s_array() {
+		delete[] arr;
+	}
+
+	int operator[] (int pos){
+		if ((pos >= length) && (pos < 0)) {
+			return(INT16_MIN);
+		}
+		else { return(arr[pos]); }
+	}
+
+};
+
+class usage_s_array {
+protected:
+	double dif_value=0;
+	void re_count(int* arr, int length) {
+		dif_value = 0;
+		for (int i = 0; i < length; i++) {
+			dif_value += arr[i];
+		}
+		dif_value /= length;
+	}
+public:
+
+	usage_s_array(int* arr, int length) {
+ 
+	for (int i = 0; i < length;i++) {
+			dif_value += arr[i];
+		}
+		dif_value /= length;
+		
+	}
+
+	std::string get_dif_value() {
+		return("differance value: " + std::to_string(dif_value));
+	}
+};
+
+class super_array:public s_array,public usage_s_array {/*P.S если бы здесь вместо public, был protected то мы бы не смогли вызывать из производного класса мтеоды родительских (из main)*/
+public:
+
+	super_array(int l, int data) :s_array(l, data),usage_s_array(arr,l) {};
+
+	void change(int pos,int n) {
+
+		if ((pos > 0) || (pos < length)) {
+			arr[pos] = n;
+			this->re_count(arr, length);
+		}
+	}
+};
+
+int main()
+{
+
+	super_array test(10, 23);
+	std::cout << test.get_dif_value();
+	test.change(12, 5000);
+	std::cout << test.get_dif_value();
+}

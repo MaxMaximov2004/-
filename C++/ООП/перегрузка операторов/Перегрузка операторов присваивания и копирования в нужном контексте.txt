@@ -1,0 +1,87 @@
+Лафорре Р ст 518 (в основном про this) 
+
+Как уже не одно кратно было сказано C++ может перегружать свои операторы для классов, особое внимание нужно уделить перегрузке оператора присваивания и конструктору копирования
+причём чаще всего их нужно перегружать при работе с динамической помятью т.к. стандартные операторы присваивания  и конструкторы копирования просто копируют поля одного объекта в поля
+другого объекта, также при пергрузке данных операторов чаще всего необходимо использовать This для возвращения только что созданного объекта.
+
+P.S. не обращай внимания на шаблоны (а лучше их повтори)
+
+#include <iostream>
+#include <string>
+
+template<typename Arr_Type>
+class _array {
+private:
+	Arr_Type *arr = nullptr;
+	int length;
+	friend class _array;
+public:
+
+	_array(int n) :length(n) {
+		arr = new Arr_Type[n];
+	}
+
+	_array (Arr_Type *a, int n):length(n) {
+		arr = new Arr_Type[n];
+
+		for (int i = 0; i < length; i++) {
+			arr[i] = a[i];
+		};
+	}
+
+	_array(Arr_Type Unit, int n) :length(n) {
+		arr = new Arr_Type[n];
+
+		for (int i = 0; i < length; i++) {
+			arr[i] = Unit;
+		};
+	} 
+
+	void show_str() {
+		//std::string s;
+
+		for (int i = 0; i < length; i++) {
+			//s += std::to_string(arr[i]) + "\n";
+			std::cout << arr[i] << "\n";
+		}
+	}
+
+	Arr_Type& operator[](int n) {
+
+		if ((n >= length) || (n < 0)) {
+			//return(nullptr);
+		}
+		else {
+			return(arr[n]);
+		}
+	}
+
+
+	_array& operator=(_array& A) {
+		
+		std::cout << "Active =";
+			for (int i = 0; i < length; i++) {
+				arr[i] = A.arr[i];
+			}
+			return(*this);
+	}
+
+	_array(_array& A) {
+		length = A.length;
+		arr = new Arr_Type[length];
+
+		for (int i = 0; i < length; i++) {
+			arr[i] = A.arr[i];
+		}
+	}
+};
+
+
+int main()
+{
+	_array <std::string> a("Bla-Bla-Bla", 4);
+	_array <std::string> b=a;
+	
+	b[2] = "fsaagadf";
+	a.show_str();
+}

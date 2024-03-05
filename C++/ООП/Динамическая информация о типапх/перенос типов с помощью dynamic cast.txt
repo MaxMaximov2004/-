@@ -1,0 +1,77 @@
+Р Лаффоре ст 524
+В C++ возможен перенос указателей с базового класса к производным и наоборот следует отметить, что указатель базового класса может ссылаться на любой произвольный, но он будет иметь доступ только к своим полям и методам (он не будет видеть методы и поля произвольного класса).
+Нисходящее приведение типов удобно для приведения к более  удобному виду указателей (согласись обрезанным классом не так интересно пользоваться), когда восходящее приведение удобнее для хранения в каком-нибудь массиве или списке многих элементов разных классов (унаследованных от базового).
+
+#include <iostream>
+#include <typeinfo>
+
+
+class father {
+public:
+    virtual void funct() {};
+    int data;
+
+    father(int a) :data(a) {
+    
+    };
+
+    father() :data(0) {
+
+    };
+};
+
+class son : public father {
+public:
+    int son_data;
+
+    son(int a, int c):son_data(c) 
+    {
+        data = a;
+    };
+
+    son() :son_data(0)
+    {
+        data = 0;
+    };
+};
+
+class doughter: public father {
+public:
+    int dot_data;
+    
+    doughter(int a, int b): dot_data(b) {
+        data = a;
+    }
+
+    doughter() : dot_data(0) {
+        data = 0;
+    }
+};
+
+bool is_son(father* unknown) {
+
+    son* exaample;
+
+    if (exaample = dynamic_cast<son*> (unknown)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+int main()
+{
+    //приведение к базовому типу (в данном случае son к father) -восхождение по дереву
+    son* Spointer = new son(85, 56);
+    father* Fpointer = dynamic_cast<father*>(Spointer);
+    std::cout << Fpointer->data << "\n";
+
+
+    //приведение к более низкому классу
+    Fpointer = new doughter(75, 85);
+    doughter* Dpointer = dynamic_cast<doughter*> (Fpointer);
+    std::cout << Dpointer->data <<" "<<Dpointer->dot_data << "\n";
+}
+
+

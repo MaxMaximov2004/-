@@ -1,0 +1,60 @@
+перегрузка оператора [] применяется при работе с массивами,списками и прочими контейнерами определённых внутри полбзовательского класса
+и определяется следующим образом: <Class_name или имя типа> operator& [] (int n) <-- в данном случае оператор возвращает ссылку на объект класса
+или на выбранный тип, при этом он принимает индекс n по которому и происходит поиск, в итоге этот оператор возвращает именно член из контейнера 
+(но думается мне что в целях безопасности можно и возвращать копию этого члена в примеры это метод copy)
+
+#include <iostream>
+#include <string>
+
+class something_clas {
+private:
+	double* array = nullptr;
+	int length;
+public:
+	something_clas(int n): length(n) {
+
+		array = new double[n];
+	};
+
+	something_clas(int n, double mark): length(n) {
+
+		array = new double[n];
+		for (int i = 0; i < length; i++)	 {	array[i] = mark;}
+	};
+
+	void print_arr() {
+		for (int i = 0; i < length; i++) { std::cout <<i<<" "<< array[i]<<"\n"; }
+	}
+
+	double& operator [](int n) { /*возвращение элемента массива по ссылке*/
+		if ((n < 0) || (n >= length)) {
+			return(array[0]);
+		}
+		else return(array[n]);
+
+	};
+
+	double& copy(int n) { /*возвращение копии элемента, также по ссылке*/
+		if ((n < 0) || (n >= length)) {
+			return(array[0]);
+		}
+		else { 
+			double* a = new double;
+			*a=array[n];
+			return(*a);
+		};
+	}
+};
+
+int main()
+{
+	something_clas test(10,5.6);
+	test.print_arr();
+	test[5] = 53656.5654;
+	std::cout << "\n\n\n";
+	test.print_arr();
+	test.copy(8) = 654984.688;
+	std::cout << "\n\n\n";
+	test.print_arr();
+
+}

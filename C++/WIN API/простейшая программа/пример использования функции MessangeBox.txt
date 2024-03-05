@@ -1,0 +1,12 @@
+функцию MessageBox можно использовать при выводе конечных значений
+
+#include <Windows.h>
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdline, int nCmdShow) //можно использовать и обычный Main (вроде-бы)
+{
+	MessageBox(NULL,L"Hi",L"Hi!",MB_OK);
+	/*1)Дискриптор 2)строка, которая будет написана в пользовательской части окна
+	3) строка которая будет написана в верхнем левом углу экрана (обычно где название программы)
+	4)тип кнопки*/
+	return(0);
+}

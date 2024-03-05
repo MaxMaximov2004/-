@@ -1,0 +1,65 @@
+Р Лафорре глава 9
+
+в C++ один класс может наследовать поля и методы другого класса, что может быть полезно когда описан один класс и не нужно его изменять 
+(т.к он уже отлажен и вообще не лезь, а то сломаешь), и при этом необходимо ввездти новые методы работы с классом (можно конечно ограничится функциями, но это будет не вполне читабельно, когда их будет несколько).
+Вместе с наследованием нужно и помнить про спецификаторы доступа (ст 367): public,private,protected; protected-дочерний (производный) класс может получить доступ к полям и методам родительского класса, но извне через дочерний класс нельзя получить доступ к родительскому.
+
+#include <iostream>
+#include <string>
+
+class npc {	
+protected:
+	int health;
+	int stamina;
+	int mana;
+
+	int return_health() { return(health); }
+	int return_stamina() { return(stamina); }
+	int return_mana() { return(mana); }
+
+public:
+	npc(int h, int s, int m) :health(h), stamina(s), mana(m) {};
+
+	std::string return_info() {
+		return("health:"+std::to_string(health)+ " stamina:" + std::to_string(stamina)+ " mana:" + std::to_string(mana)+"\n");
+	}
+};
+
+class human :public npc {
+public:
+	human(int h, int s) :npc(h, s, 0) {};
+
+	std::string return_info() {
+		return("Human health:" + std::to_string(health) + " stamina:" + std::to_string(stamina) + " mana:" + std::to_string(mana) + "\n");
+	}
+};
+
+class goblin: protected npc {
+protected:
+	int level;
+
+public:
+	goblin(int lvl) :level(lvl), npc((lvl + 1) * 10, (lvl + 1) * 15, (lvl + 1)) {
+		if (mana > 10) { mana *= 3; }
+		if (health > 500) { stamina -= health * 0.7; }
+	};
+
+	std::string return_info() {
+		return("Goblin health:" + std::to_string(health) + " stamina:" + std::to_string(stamina) + " mana:" + std::to_string(mana) + "\n");
+	}
+};
+
+int main()
+{
+	npc test1(100, 200, 5000);
+	std::cout<<test1.return_info();
+
+	human test2(100, 100);
+	std::cout<<test2.return_info();
+
+	goblin test3(5);
+	std::cout << test3.return_info();
+
+	goblin test4(70);
+	std::cout << test4.return_info();
+}

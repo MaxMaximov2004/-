@@ -1,0 +1,86 @@
+Р Лаффоре ст 557
+Язык C++ позволяет работать с бинарными файлами ( в которых записаны только 0 и 1), т.е записывать в файлы сразу объекты и считывать их, здесь следует помнить, что в данном случае C++ показывает всю свою строго-типизированную сущность и если вы записали в файл объект класса А и попробовали прочитать и записать этот участок памяти в объект класса Б, то с большой вероятностью мы получим ошибку, или undefinded behavior т.к. поля этих 2 классов могут отличаться (~~/ если же они не отличаются или являются наслениками какого-то 3 класса, имеющего только поля, то в теории это возможно (н в последнем случаю я бы копировал из файла в экземпляр родительского файла)/~~).
+Для одновременной записи и чтения можно использовать класс fstream вместе с битами режимов (Р лаффоре ст 563 или https://learn.microsoft.com/ru-ru/cpp/standard-library/ios-base-class?view=msvc-170 ) 
+
+
+КОД:
+
+#include <fstream> 
+#include <iostream>
+#include <string>
+#include <typeinfo>
+#include <ctime>
+
+class store {
+protected:
+	//std::string name;
+	int numb;
+	double price;
+	unsigned int exp_date;
+
+public:
+
+	store():numb(0),price(0),exp_date(0){}
+	
+	void set(int n, int p, unsigned int date) {
+		numb = n;
+		price = p;
+		exp_date = date;
+	}
+
+	std::string info() {
+		return("Numer in catalog: "+std::to_string(numb)+" Price: "+std::to_string(price)+ " Experation date: "+std::to_string(exp_date) +"\n");
+	}
+};
+
+int main()
+{
+
+	//int len = 25;
+	//long double* arr = new long double[len];
+	//
+	//arr[0] = 3;
+	//for (int i = 1; i < len; i++) {
+	//	arr[i] = arr[i - 1] * 3.1425-arr[i-1];
+	//	std::cout << arr[i] << std::endl;
+	//}
+	//
+	//std::ofstream file("file.dat", std::ios::binary);
+	//
+	//file.write(reinterpret_cast<char*>(arr), len * sizeof(long double));
+	//file.close();
+	////delete[] arr;
+	//
+	//std::cout << "From file\n";
+	//
+	//int L = 25;
+	//long double* file_buff = new long double[L];
+	//
+	//std::ifstream read_file("file.dat", std::ios::binary);
+	//read_file.read(reinterpret_cast<char*>(file_buff), L * sizeof(long double));
+	//
+	//for (int i = 0; i < L; i++) {
+	//	std::cout << file_buff[i] << std::endl;
+	//}
+	//std::cout << typeid(*file_buff).name() <<"  "<<sizeof(*file_buff) << "\n";
+	srand(time(0));
+
+	store product;
+	std::fstream data_base;
+	data_base.open("store.dat", std::ios::app | std::ios::out | std::ios::in | std::ios::binary); //адекватное открытие файла, а именно: data_base открывается на чтение и запись одновременно, а также запись начинается с конца файла.
+
+	for (int i = 0; i < 10; i++) {
+		product.set(i, rand() % 30, rand() % 120 + 30);
+
+		data_base.write(reinterpret_cast<char*>(&product), sizeof(store));
+	}
+
+	data_base.seekg(0); //перевод указателя на начало файла (для адекватного чтения)
+
+	do {
+		store clone;
+		data_base.read(reinterpret_cast<char*>(&clone), sizeof(store));
+		std::cout << clone.info();
+	} while (!data_base.eof());
+
+}

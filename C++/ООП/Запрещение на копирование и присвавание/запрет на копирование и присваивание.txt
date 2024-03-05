@@ -1,0 +1,28 @@
+Р Лаффоре ст 509
+В C++ возможно запретить использование операторов и конструкторов, просто внеся их в поле private
+
+P.S. если касперыч ругается, отключи его файловый антивирус
+
+#include <iostream>
+#include <string>
+
+class alpha {
+private:
+	int data;
+	alpha operator=(alpha& a) {};//запрет ипользования =
+	//alpha (alpha &obj){}//запрет ипользования конструктора копирования
+public:
+
+	alpha(int n) :data(n) {
+
+	};
+	
+};
+
+
+int main()
+{
+	alpha a_1(56);
+	//alpha a_2 = a_1;//а так нельзя
+	alpha a_2(a_1); //так можно
+}

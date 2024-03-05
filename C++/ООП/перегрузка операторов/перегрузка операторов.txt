@@ -1,0 +1,81 @@
+Р Лафоре ст 313
+Язык C++ позволяет перегружать стандартные операторы (+ = - * / += ++ -- ==), перегрузка операторов происходит с использованием 
+ключевого слова operator и имеет следующий синткасис: Class_name(или другой тип данных, стоящий слева от опретора(не lvalue)) operator + (тип данных или Class_name)
+и тело оператора, стоящие в {}; 
+
+Примечание: когда определяются бинарные операции + / * - и т.д. стоит создавать новый объект класса в теле оператора 
+и уже возвращать его значение (не изменяя объекты класса переданные в оператор).
+Также операторы поддерживают множественную перегрузку.
+
+Код (какой-то задачи из Р Лафоре, представляет в себе денежный тип данных):
+
+#include <iostream>
+#include <string>
+
+class bMoney {
+private:
+	long double money;
+	std::string s_money;
+public:
+	bMoney() :money(0) {};
+	bMoney(long double m) :money(m) {
+		s_money = std::to_string(money) + " rubles";
+	};
+
+	bMoney(char s[])
+	{
+		s_money = s;
+
+		size_t pos = s_money.find_first_of("rubles");
+		money = std::stod(s_money.substr(0, pos));
+	};
+
+	void madd(bMoney m1, bMoney m2) {
+		money = m1.money + m2.money;
+	};
+	void getmoney()
+	{
+		std::cout << "Value: " << money<<"\n";
+	};
+	void putmoney()
+	{
+		std::cout << "Pleasse, enter a value: ";
+		std::cin >> money;
+		s_money.clear();
+		s_money = std::to_string(money) + " rubles";
+	};
+
+	void operator ++() {
+		money++;
+		s_money = std::to_string(money) + " rubles";
+	};
+
+	bMoney operator +=(long double a) {
+		money+=a;
+		s_money = std::to_string(money) + " rubles";
+		return *this;
+	};
+
+	bMoney operator + (bMoney A) {
+		bMoney N;
+		N.money = money+ A.money;
+		N.s_money = std::to_string(N.money) + " rubles";
+		return N;
+	};
+
+};
+
+int main()
+{
+	char test[] = "100 rubles";
+	bMoney T(test);
+	bMoney A(200);
+	bMoney B;
+	T.getmoney();
+	A.getmoney();
+	B = A + T;
+	B.getmoney();
+	B = A + 50;
+	B.getmoney();
+
+}

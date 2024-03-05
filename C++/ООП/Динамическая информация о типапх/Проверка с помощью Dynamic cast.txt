@@ -1,0 +1,45 @@
+Р Лаффоре ст523
+
+Динамическая проверка доступна при сравнении 2 классов, один из них наследует другой (обычно этот класс является опорным для всех других классов, аля как на списке возможно создать все виды очередей и стеков), проверка осуществляется за счёт оператора dynamic_cast (из <typeinfo>)
+
+code:
+#include <iostream>
+#include <typeinfo>
+
+
+class father {
+public:
+    virtual void funct() {};
+private:
+    int data;
+};
+
+class son : public father {
+
+};
+
+class doughter: public father {
+
+};
+
+bool is_son(father* unknown) {
+
+    son* exaample;
+
+    if (exaample = dynamic_cast<son*> (unknown)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+int main()
+{
+    
+    doughter obj_1;
+    son obj_2;
+
+    std::cout << is_son(&obj_1) << "\n";
+    std::cout << is_son(&obj_2) << "\n";
+}
